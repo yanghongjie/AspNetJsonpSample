@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<style type="text/css">.result { }</style>
+
+<h2>Index</h2>
+
+
+
+
+<div>
+    Name: <input type="text" name="key" value="逗豆豆" />
+    <button type="button" class="btn btn-primary" id="testMvc1">Test Mvc JSONP 1</button>
+    <button type="button" class="btn btn-primary" id="testMvc2">Test Mvc JSONP 2</button>
+    <button type="button" class="btn btn-primary" id="testMvc3">Test Mvc JSONP 3</button>
+    <button type="button" class="btn btn-primary" id="testWebApi1">Test Webapi JSONP 1</button>
+    <button type="button" class="btn btn-primary" id="testWebApi2">Test Webapi JSONP 2</button>
+    <button type="button" class="btn btn-primary" id="testWebApi3">Test Webapi JSONP 3</button>
+    <div class="result">
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#testMvc1').click(function () {
+            $.ajax({
+                url: 'http://localhost:41138/Home/GetDataByJsonp',
+                data: { key: $('input[name=key]').val() },
+                type: "GET",
+                dataType: "jsonp",
+                jsonpCallback: "localJsonpCallback"
+            });
+        });
+
+        $('#testMvc2').click(function () {
+
+            $.getJSON("http://localhost:41138/Home/GetDataByJsonp?callback=?", { key: $('input[name=key]').val() }, localJsonpCallback);
+
+        });
+
+        $('#testMvc3').click(function () {
+
+            $.getJSON("http://localhost:41138/Normal/GetDataByJsonp?callback=?", { key: $('input[name=key]').val() }, localJsonpCallback);
+
+        });
+
+        $('#testWebApi1').click(function () {
+
+            $.ajax({
+                url: "http://localhost:41147/api/Home/GetDataByJsonp",
+                data: { key: $('input[name=key]').val() },
+                type: "GET",
+                dataType: "jsonp",
+                success: localJsonpCallback
+            });
+
+        });
+
+        $('#testWebApi2').click(function () {
+
+            $.getJSON("http://localhost:41147/api/Home/GetDataByJsonp?callback=?", { key: $('input[name=key]').val() }, localJsonpCallback);
+
+        });
+
+        $('#testWebApi3').click(function () {
+
+            $.getJSON("http://localhost:41147/api/Normal/GetDataByJsonp?callback=?", { key: $('input[name=key]').val() }, localJsonpCallback);
+
+        });
+
+    });
+
+    function localJsonpCallback(json) {
+        if (json.Success) {
+            $('.result').append(json.Data+"<br/>");
+        }
+        else {
+            $('.result').append(json.Message);
+        }
+
+        $('.result').fadeIn('fast');
+    }
+</script>
